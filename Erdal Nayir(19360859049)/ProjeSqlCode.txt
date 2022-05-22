@@ -1,0 +1,202 @@
+SHOW ENGINE INNODB STATUS;
+
+-- -----------------------------------------------------
+-- Table `BOLGE`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS BOLGE (
+  bolge_id INT NOT NULL,
+  bolge_isim VARCHAR(45) NOT NULL,
+  bolge_nufus INT NULL,
+  su_miktari DOUBLE NULL,
+  bolge_yuzolcumu DOUBLE NULL,
+  ortalama_sicaklik INT NULL,
+  PRIMARY KEY (bolge_id));
+
+
+
+CREATE TABLE IF NOT EXISTS SEHİR (
+  sehir_id INT NOT NULL,
+  sehir_isim VARCHAR(45) NOT NULL,
+  sehir_nufus VARCHAR(45) NOT NULL,
+  sehir_hdi FLOAT NULL,
+  sehir_suc_orani FLOAT NULL,
+  sehir_yuzolcum DOUBLE NULL,
+  bolge_id INT NOT NULL,
+  PRIMARY KEY (sehir_id, bolge_id),
+  CONSTRAINT bolge_sehir
+    FOREIGN KEY (bolge_id)
+    REFERENCES BOLGE (bolge_id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`IKLIM`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS IKLIM (
+  iklim_id INT NOT NULL,
+  iklim_isim VARCHAR(45) NOT NULL,
+  ortalama_sicaklik VARCHAR(45) NOT NULL,
+  ortalama_yagis VARCHAR(45) NOT NULL,
+  PRIMARY KEY (iklim_id));
+
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`ORMAN`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS ORMAN (
+  orman_id INT NOT NULL,
+  orman_isim VARCHAR(45) NOT NULL,
+  orman_buyukluk FLOAT NOT NULL,
+  yangin_sayisi INT NULL,
+  korumada_mi VARCHAR(6) NULL,
+  degisim_yuzdesi VARCHAR(45) NULL,
+  sehir_id INT NOT NULL,
+  bolge_id INT NOT NULL,
+  iklim_id INT NOT NULL,
+  PRIMARY KEY (orman_id, iklim_id),
+  CONSTRAINT sehir_orman
+    FOREIGN KEY (sehir_id)
+    REFERENCES SEHİR (sehir_id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT bolge_orman
+    FOREIGN KEY (bolge_id)
+    REFERENCES BOLGE (bolge_id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT iklim_orman
+    FOREIGN KEY (iklim_id)
+    REFERENCES IKLIM (iklim_id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`AGAC`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS AGAC (
+  agac_id INT NOT NULL,
+  agac_isim VARCHAR(45) NOT NULL,
+  agac_turu VARCHAR(25) NOT NULL,
+  ort_su_tuketimi FLOAT NULL,
+  ortalama_omur INT NULL,
+  ortalama_uzunluk FLOAT NULL,
+  PRIMARY KEY (agac_id));
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`TOPRAK`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS TOPRAK (
+  toprak_id INT NOT NULL,
+  toprak_isim VARCHAR(45) NOT NULL,
+  toprak_rengi VARCHAR(45) NULL,
+  ortalama_nem FLOAT NULL,
+  PRIMARY KEY (toprak_id));
+
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`PERSONEL`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS PERSONEL (
+  personel_id INT NOT NULL,
+  personel_isim VARCHAR(45) NOT NULL,
+  ersonel_soyisim VARCHAR(45) NOT NULL,
+  personel_yas VARCHAR(45) NOT NULL,
+  orman_id INT NOT NULL,
+  sehir_id INT NOT NULL,
+  PRIMARY KEY (personel_id, sehir_id),
+  CONSTRAINT orman_personel
+    FOREIGN KEY (orman_id)
+    REFERENCES ORMAN (orman_id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT sehir_personel
+    FOREIGN KEY (sehir_id)
+    REFERENCES SEHİR (sehir_id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`HAYVAN`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS HAYVAN (
+  hayvan_id INT NOT NULL,
+  hayvan_isim VARCHAR(45) NOT NULL,
+  ortalama_omur INT NULL,
+  etcil_mi VARCHAR(6) NULL,
+  PRIMARY KEY (hayvan_id));
+
+
+
+
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`ORMAN_AGAC`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS ORMAN_AGAC (
+  orman_id INT NOT NULL,
+  agac_id INT NOT NULL,
+  PRIMARY KEY (orman_id, agac_id),
+  CONSTRAINT orman_agac
+    FOREIGN KEY (orman_id)
+    REFERENCES ORMAN (orman_id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT agac_orman
+    FOREIGN KEY (agac_id)
+    REFERENCES AGAC (agac_id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`ORMAN_HAYVAN`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS ORMAN_HAYVAN (
+  hayvan_id INT NOT NULL,
+  orman_id INT NOT NULL,
+  PRIMARY KEY (hayvan_id, orman_id),
+  CONSTRAINT hayvan_orman
+    FOREIGN KEY (hayvan_id)
+    REFERENCES HAYVAN (hayvan_id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT orman_hayvan
+    FOREIGN KEY (orman_id)
+    REFERENCES ORMAN (orman_id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`TOPRAK_ORMAN`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS TOPRAK_ORMAN (
+  toprak_id INT NOT NULL,
+  orman_id INT NOT NULL,
+  PRIMARY KEY (toprak_id, orman_id),
+  CONSTRAINT toprak_orman
+    FOREIGN KEY (toprak_id)
+    REFERENCES TOPRAK (toprak_id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT orman_toprak
+    FOREIGN KEY (orman_id)
+    REFERENCES ORMAN (orman_id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+
+
